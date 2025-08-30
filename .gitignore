@@ -1,0 +1,25 @@
+#general IDE ignores
+.idea/
+.vscode/
+*.swp
+*.swo
+.ipynb_checkpoints/
+.DS_Store
+
+# ts2vec ignores
+ts2vec/datasets/*[!.py]
+ts2vec/.ipynb_checkpoints
+ts2vec/__pycache__
+ts2vec/training/*
+ts2vec/scripts/_nohup
+ts2vec/.rsync-filter
+
+# exathlon ignores
+exathlon/__pycache__/
+exathlon/*.py[cod]
+exathlon/.env
+exathlon/.spyproject/
+
+# data and outputs
+exathlon/data/
+exathlon/outputs/
