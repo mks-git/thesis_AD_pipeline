@@ -579,9 +579,13 @@ def get_modeling_task_and_classes(args):
     """
     from modeling.forecasting.forecasters import forecasting_classes
     from modeling.reconstruction.reconstructors import reconstruction_classes
+    from modeling.embedding.embedders import embedding_classes
     if args.model_type in CHOICES['train_model']['forecasting']:
         return 'forecasting', forecasting_classes
-    return 'reconstruction', reconstruction_classes
+    elif args.model_type in CHOICES['train_model']['reconstruction']:
+        return 'reconstruction', reconstruction_classes
+    elif args.model_type in CHOICES['train_model']['embedding']:
+        return 'embedding', embedding_classes
 
 
 def is_percentage(x):
@@ -673,6 +677,7 @@ CHOICES = {
     'train_model': {
         'forecasting': ['naive.forecasting', 'rnn'],
         'reconstruction': ['ae', 'bigan'],
+        'embedding': ['ts2vec'],
         'modeling_split': ['random.split', 'stratified.split'],
         # model hyperparameters choices
         'activation': ['relu', 'selu', 'elu', 'sigmoid', 'linear'],
@@ -689,6 +694,7 @@ CHOICES = {
     'train_scorer': {
         'forecasting_scoring': ['re', 'nll'],
         'reconstruction_scoring': ['mse', 'mse.dis', 'mse.ft'],
+        'embedding_scoring': ['knn'],
         # use point-based, custom range-based or default requirements evaluation
         'evaluation_type': ['point', 'range', *[f'ad{i}' for i in range(1, 5)]],
         # function choices for custom range-based evaluation
@@ -747,10 +753,12 @@ CHOICES = {
 # add combined, higher-level, choices
 CHOICES['train_model']['model'] = \
     CHOICES['train_model']['forecasting'] + \
-    CHOICES['train_model']['reconstruction']
+    CHOICES['train_model']['reconstruction'] + \
+    CHOICES['train_model']['embedding']
 CHOICES['train_scorer']['scoring_method'] = \
     CHOICES['train_scorer']['forecasting_scoring'] + \
-    CHOICES['train_scorer']['reconstruction_scoring']
+    CHOICES['train_scorer']['reconstruction_scoring'] + \
+    CHOICES['train_scorer']['embedding_scoring']
 CHOICES['train_explainer']['explanation_method'] = \
     CHOICES['train_explainer']['model_free_explanation'] + \
     CHOICES['train_explainer']['model_dependent_explanation']
@@ -943,6 +951,72 @@ parsers['train_model'].add_argument(
     help='dropout rate for the recurrent layers of the RNN'
 )
 # RECONSTRUCTION MODELS #
+
+# fix default parameters for TS2Vec
+def int_or_none(x):
+    if x == "None":
+        return None
+    return int(x)
+
+# TS2Vec hyperparameters
+parsers['train_model'].add_argument(
+    '--ts2vec-input-dims', default=DEFAULTS.get('ts2vec_input_dims', None), type=int, required=False,
+    help='Input dimensions for TS2Vec'
+)
+parsers['train_model'].add_argument(
+    '--ts2vec-output-dims', default=DEFAULTS.get('ts2vec_output_dims', 320), type=int,
+    help='Output embedding dimensions for TS2Vec'
+)
+parsers['train_model'].add_argument(
+    '--ts2vec-hidden-dims', default=DEFAULTS.get('ts2vec_hidden_dims', 64), type=int,
+    help='Hidden dimensions for TS2Vec'
+)
+parsers['train_model'].add_argument(
+    '--ts2vec-depth', default=DEFAULTS.get('ts2vec_depth', 10), type=int,
+    help='Depth of TS2Vec model'
+)
+parsers['train_model'].add_argument(
+    '--ts2vec-device', default=DEFAULTS.get('ts2vec_device', 'cpu'), type=str,
+    help='Device for TS2Vec (cuda or cpu)'
+)
+parsers['train_model'].add_argument(
+    '--ts2vec-lr', default=DEFAULTS.get('ts2vec_lr', 0.001), type=float,
+    help='Learning rate for TS2Vec'
+)
+parsers['train_model'].add_argument(
+    '--ts2vec-batch-size', default=DEFAULTS.get('ts2vec_batch_size', 16), type=int,
+    help='Batch size for TS2Vec'
+)
+parsers['train_model'].add_argument(
+    '--ts2vec-max-train-length', default=DEFAULTS.get('ts2vec_max_train_length', None), type=int,
+    help='Max train length for TS2Vec'
+)
+parsers['train_model'].add_argument(
+    '--ts2vec-temporal-unit', default=DEFAULTS.get('ts2vec_temporal_unit', 0), type=int,
+    help='Temporal unit for TS2Vec'
+)
+parsers['train_model'].add_argument(
+    '--ts2vec-after-iter-callback', default=DEFAULTS.get('ts2vec_after_iter_callback', None),
+    help='After-iteration callback for TS2Vec'
+)
+parsers['train_model'].add_argument(
+    '--ts2vec-after-epoch-callback', default=DEFAULTS.get('ts2vec_after_epoch_callback', None),
+    help='After-epoch callback for TS2Vec'
+)
+# TS2Vec training/fitting parameters
+parsers['train_model'].add_argument(
+    '--ts2vec-n-epochs', default=DEFAULTS.get('ts2vec_n_epochs', 30), type=int, required=False,
+    help='Number of epochs for TS2Vec training'
+)
+parsers['train_model'].add_argument(
+    '--ts2vec-n-iters', default=DEFAULTS.get('ts2vec_n_iters', None), type=int, required=False,
+    help='Number of iterations for TS2Vec training'
+)
+parsers['train_model'].add_argument(
+    '--ts2vec-verbose', action='store_true',
+    help='Whether to print the training loss after each epoch for TS2Vec'
+)
+
 # Autoencoder hyperparameters
 parsers['train_model'].add_argument(
     '--ae-latent-dim', default=DEFAULTS['ae_latent_dim'], type=int,
@@ -1304,7 +1378,8 @@ def get_script_args_as_formatted_dict(args_ns, script_name):
     # remove `False` arguments and empty out values of `True` arguments
     args_dict = get_handled_store_true(args_dict)
     # turn the dictionary keys into command-line argument names
-    return {('--' + key_).replace('_', '-'): v for key_, v in args_dict.items()}
+    #return {('--' + key_).replace('_', '-'): v for key_, v in args_dict.items()}
+    return {('--' + key_).replace('_', '-'): v for key_, v in args_dict.items() if v is not None}
 
 
 def get_script_args_dict(args_dict, script_name, remove_irrelevant=False):

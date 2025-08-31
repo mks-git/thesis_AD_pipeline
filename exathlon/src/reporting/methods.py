@@ -173,14 +173,32 @@ ARGS = {
     # pipeline execution shortcut arguments
     'pipeline_type': 'ad.ed'
 }
-# uncomment to report the AD results of the paper (after having run the corresponding methods)
+# uncomment to report the AD results of the thesis (after having run the corresponding methods)
 COMPARED_ARGS, COMPARED_METHOD_TITLES = [], []
-for m, s in zip(['rnn', 'ae', 'bigan'], ['re', 'mse', 'mse.ft']):
-    args_dict = copy.deepcopy(ARGS)
-    args_dict['model_type'] = m
-    args_dict['scoring_method'] = s
-    COMPARED_ARGS.append(args_dict)
-    COMPARED_METHOD_TITLES.append(m.upper())
+# AE
+ae_args = copy.deepcopy(ARGS)
+ae_args['model_type'] = 'ae'
+ae_args['scoring_method'] = 'mse'
+COMPARED_ARGS.append(ae_args)
+COMPARED_METHOD_TITLES.append('AE')
+
+# TS2Vec
+ts2vec_args = copy.deepcopy(ARGS)
+ts2vec_args['model_type'] = 'ts2vec'
+ts2vec_args['scoring_method'] = 'knn'  # or 'ts2vec' if you use the original scorer
+# Make sure all other relevant TS2Vec hyperparameters are set if they differ from ARGS defaults!
+COMPARED_ARGS.append(ts2vec_args)
+COMPARED_METHOD_TITLES.append('TS2Vec')
+
+# uncomment to report the AD results of the exathlon paper (after having run the corresponding methods)
+# COMPARED_ARGS, COMPARED_METHOD_TITLES = [], []
+# for m, s in zip(['rnn', 'ae', 'bigan'], ['re', 'mse', 'mse.ft']):
+#     args_dict = copy.deepcopy(ARGS)
+#     args_dict['model_type'] = m
+#     args_dict['scoring_method'] = s
+#     COMPARED_ARGS.append(args_dict)
+#     COMPARED_METHOD_TITLES.append(m.upper())
+
 # uncomment to report the ED results of the paper (after having run the corresponding methods)
 #COMPARED_ARGS, COMPARED_METHOD_TITLES = [], []
 #for m in ['macrobase', 'exstream', 'lime']:

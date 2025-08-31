@@ -60,8 +60,8 @@ if __name__ == '__main__':
         SCORER_INPUT_PATH = get_output_path(args, 'train_scorer')
         # load the model and scoring classes for the relevant type of task
         task_type, model_classes = get_modeling_task_and_classes(args)
-        a_t = 'the type of task must be either `forecasting` or `reconstruction`'
-        assert task_type in ['forecasting', 'reconstruction'], a_t
+        a_t = 'the type of task must be either `forecasting`, `reconstruction` or `embedding`'
+        assert task_type in ['forecasting', 'reconstruction', 'embedding'], a_t
         scoring_classes = importlib.import_module(f'scoring.{task_type}.{task_type}_scorers').scoring_classes
         # non-parametric models are simply initialized without loading anything
         if args.model_type == 'naive.forecasting':

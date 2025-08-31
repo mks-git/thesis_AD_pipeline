@@ -13,6 +13,7 @@ from tensorflow.keras.layers import LeakyReLU
 from tensorflow.keras.models import load_model
 from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint, EarlyStopping, TerminateOnNaN
 
+
 # add absolute src directory to python path to import other project modules
 import sys
 src_path = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir))

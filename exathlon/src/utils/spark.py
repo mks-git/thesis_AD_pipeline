@@ -93,6 +93,21 @@ PIPELINE_DEFAULT_ARGS = {
     # RECONSTRUCTION MODELS #
     'window_size': 40,
     'window_step': 1,
+    #ts2vec
+    'ts2vec_input_dims': 19,
+    'ts2vec_output_dims': 320,
+    'ts2vec_hidden_dims': 64,
+    'ts2vec_depth': 10,
+    'ts2vec_device': 'cpu',
+    'ts2vec_lr': 0.001,
+    'ts2vec_batch_size': 8,
+    'ts2vec_max_train_length': None,
+    'ts2vec_temporal_unit': 0,
+    'ts2vec_after_iter_callback': None,
+    'ts2vec_after_epoch_callback': None,
+    'ts2vec_n_epochs': 30,
+    'ts2vec_n_iters': None,
+    'ts2vec_verbose': True,
     # autoencoder
     'ae_latent_dim': 32,
     'ae_type': 'dense',

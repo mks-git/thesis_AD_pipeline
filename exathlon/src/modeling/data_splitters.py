@@ -24,14 +24,20 @@ def get_sampling_f_and_targets_presence(model_type):
     Returns:
         func, bool: sampling function and presence of sample targets for the provided type of model.
     """
-    a_t = 'model type must be a supported forecasting or reconstruction-based method'
-    assert model_type in CHOICES['train_model']['forecasting'] + \
-           CHOICES['train_model']['reconstruction'], a_t
+    a_t = 'model type must be a supported forecasting, reconstruction, or embedding-based method'
+    supported = CHOICES['train_model']['forecasting'] + \
+                CHOICES['train_model']['reconstruction'] + \
+                CHOICES['train_model'].get('embedding', [])
+    assert model_type in supported, a_t
     print(f'setting samples creation function for the {model_type} model...', end=' ', flush=True)
     if model_type in CHOICES['train_model']['forecasting']:
         sampling_f, are_targets = get_period_sequence_target_pairs, True
-    else:
+    elif model_type in CHOICES['train_model']['reconstruction']:
         sampling_f, are_targets = get_sliding_windows, False
+    elif model_type in CHOICES['train_model']['embedding']:
+        sampling_f, are_targets = get_sliding_windows, False
+    else:
+        raise ValueError(f"Unknown model_type: {model_type}")
     print('done.')
     return sampling_f, are_targets
 

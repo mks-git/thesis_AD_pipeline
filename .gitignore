@@ -5,6 +5,7 @@
 *.swo
 .ipynb_checkpoints/
 .DS_Store
+**/__pycache__/
 
 # ts2vec ignores
 ts2vec/datasets/*[!.py]

@@ -8,7 +8,7 @@ import datetime
 from ts2vec import TS2Vec
 import tasks
 import datautils
-from utils import init_dl_program, name_with_datetime, pkl_save, data_dropout
+from ts2vec_utils import init_dl_program, name_with_datetime, pkl_save, data_dropout
 
 def save_checkpoint_callback(
     save_every=1,

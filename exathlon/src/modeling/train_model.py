@@ -15,7 +15,7 @@ from data.helpers import load_mixed_formats
 from modeling.data_splitters import get_splitter_classes
 from modeling.forecasting.evaluation import save_forecasting_evaluation
 from modeling.reconstruction.evaluation import save_reconstruction_evaluation
-
+from modeling.embedding.evaluation import save_embedding_evaluation
 
 if __name__ == '__main__':
     # parse and get command-line arguments
@@ -41,16 +41,21 @@ if __name__ == '__main__':
     task_type, task_classes = get_modeling_task_and_classes(args)
 
     # task-specific elements
-    a_t = 'only forecasting and reconstruction tasks are supported'
-    assert task_type in ['forecasting', 'reconstruction'], a_t
+    a_t = 'only forecasting, reconstruction, and embedding tasks are supported'
+    assert task_type in ['forecasting', 'reconstruction', 'embedding'], a_t
     if task_type == 'forecasting':
         model_args = {'n_back': args.n_back, 'n_forward': args.n_forward}
         data_items = ['X', 'y']
         evaluation_saving_f = save_forecasting_evaluation
-    else:
+    elif task_type == 'reconstruction':
         model_args = {'window_size': args.window_size, 'window_step': args.window_step}
         data_items = ['X']
         evaluation_saving_f = save_reconstruction_evaluation
+    elif task_type == 'embedding':
+        model_args = {'window_size': args.window_size, 'window_step': args.window_step}
+        data_items = ['X']
+        # ToDo: implement embedding evaluation saving function
+        evaluation_saving_f = save_embedding_evaluation
 
     # constitute the train/val/test sets of the modeling task
     data = data_splitter.get_modeling_split(

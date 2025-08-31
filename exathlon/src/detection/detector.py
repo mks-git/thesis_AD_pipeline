@@ -9,6 +9,7 @@ src_path = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir))
 sys.path.append(src_path)
 from scoring.forecasting.forecasting_scorers import ForecastingScorer
 from scoring.reconstruction.reconstruction_scorers import ReconstructionScorer
+from scoring.embedding.embedding_scorers import TS2VecScorer
 from detection.helpers import threshold_scores
 from detection.threshold_selectors import selector_classes
 
@@ -64,7 +65,8 @@ class Detector:
         """
         a_t = 'only forecasting-based and reconstruction-based scorers are supported'
         assert isinstance(self.scorer, ForecastingScorer) or \
-               isinstance(self.scorer, ReconstructionScorer), a_t
+               isinstance(self.scorer, ReconstructionScorer) or \
+               isinstance(self.scorer, TS2VecScorer), a_t
         if isinstance(self.scorer, ForecastingScorer):
             a_t = '(sequence, target) pairs have to be provided for forecasting-based scorers'
             assert not (X is None or y is None), a_t
