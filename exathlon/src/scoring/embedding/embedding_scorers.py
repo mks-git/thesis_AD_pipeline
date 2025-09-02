@@ -28,7 +28,7 @@ class TS2VecScorer(Scorer):
 
     def score(self, periods):
         # Score each period in a batch
-        return np.array([self.score_period(period) for period in periods])
+        return np.array([self.score_period(period) for period in periods], dtype=object)
     
 # dictionary gathering references to the defined embedding-based scoring methods
 scoring_classes = {

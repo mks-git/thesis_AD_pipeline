@@ -106,4 +106,23 @@ class Detector:
                     Where `n_back` is the number of records used to forecast.
                 - Reconstruction-based scorers: shape `(n_periods, period_length)`.
         """
-        return threshold_scores(self.scorer.score(periods), self.threshold_selector.threshold)
+
+        # For TS2Vec, set threshold dynamically based on the scores of the current periods
+        if isinstance(self.scorer, TS2VecScorer):
+            scores = self.scorer.score(periods)
+            flat_scores = np.concatenate([s.flatten() for s in scores])
+            # Set threshold to a chosen percentile
+            self.threshold_selector.threshold = np.percentile(flat_scores, 80)
+            print("TS2Vec dynamic threshold set to:", self.threshold_selector.threshold)
+        else:
+            scores = self.scorer.score(periods)
+
+        print("Threshold:", self.threshold_selector.threshold)
+        print("Scores min/max:", np.min([np.min(s) for s in scores]), np.max([np.max(s) for s in scores]))
+        print("Scores sample:", [s[:5] for s in scores])
+        preds = threshold_scores(scores, self.threshold_selector.threshold)
+        print("Predictions sample:", [p[:5] for p in preds])
+        return preds
+
+        # original
+        #return threshold_scores(self.scorer.score(periods), self.threshold_selector.threshold)
