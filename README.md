@@ -17,7 +17,7 @@ The pipeline is designed for reproducibility and extensibility, supporting exper
 
 ```
 thesis_AD_pipeline/
-├── exathlon/
+├── exathlon/                # Extended exathlon pipeline
 │   ├── apps/                # Spark application source code
 │   ├── data/                # Raw and processed data
 │   ├── img/                 # Images and figures
@@ -25,16 +25,17 @@ thesis_AD_pipeline/
 │   ├── outputs/             # Pipeline outputs (models, results, reports)
 │   ├── src/                 # Main pipeline source code
 │   ├── extract_data.sh      # Script to extract raw data
-│   ├── requirements.txt     # Python dependencies
+│   ├── requirements.txt     # original Exathlon Python dependencies
 │   └── README.md            # Exathlon-specific documentation
 ├── ts2vec/                  # TS2Vec embedding model implementation
 │   ├── datasets/
 │   ├── models/
 │   ├── scripts/
 │   ├── tasks/
-│   ├── ts2vec.py
-│   └── README.md
-├── requirements.txt         # Top-level requirements
+│   ├── ts2vec.py            # Holds interfaces for the TS2Vec model
+│   ├── requirements.txt     # original TS2Vec Python dependencies
+│   ├── README.md            # TS2Vec-specific documentation
+├── requirements.txt     # Top-level requirements
 └── .gitignore
 ```
 
@@ -44,8 +45,8 @@ thesis_AD_pipeline/
    Use the provided `requirements.txt` files (top-level and in submodules) to install all necessary Python packages.  
    Example using conda:
    ```bash
-   conda create -n exathlon python=3.8
-   conda activate exathlon
+   conda create -n unified-py38 python=3.8
+   conda activate unified-py38
    pip install -r requirements.txt
    ```
 
@@ -57,7 +58,7 @@ thesis_AD_pipeline/
    ```
 
 3. **Configure Environment**  
-   Create a `.env` file in the project root with the following entries:
+   Create a `.env` file in the exathlon project root with the following entries:
    ```
    USED_DATA=SPARK
    DATA_ROOT=path/to/extracted/data/raw
@@ -72,7 +73,7 @@ From the `exathlon/src` directory, you can run the main pipeline script with var
 Example (anomaly detection and explanation discovery with TS2Vec and EXstream):
 
 ```bash
-python run_pipeline.py --pipeline-type ad.ed --app-id 0 --model-type ts2vec --scoring-method knn --explanation-method exstream --explained-predictions model
+python run_pipeline.py --pipeline-type ad.ed --app-id 0 --model-type ts2vec --scoring-method knn --explanation-method exstream
 ```
 
 See the notebooks in `exathlon/notebooks/` for detailed experiment instructions and reproducibility.
@@ -96,7 +97,6 @@ python ../src/reporting/report_results.py --evaluation-step scoring --scoring-se
 ## Notebooks
 
 - `exathlon/notebooks/thesis_reproducibility.ipynb`: End-to-end pipeline runs and result analysis.
-- `exathlon/notebooks/reproducibility.ipynb`: Additional experiments and figures.
 
 ## References
 
